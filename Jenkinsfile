@@ -2,12 +2,12 @@ pipeline {
     agent any
 
     environment {
-        IMAGE_NAME = "3.147.60.99:5000/backend-app" // Nexus Private Registry
+        IMAGE_NAME = "3.142.249.69:5000/backend-app" // Nexus Private Registry
         IMAGE_TAG = "v${BUILD_NUMBER}"
         FULL_IMAGE = "${IMAGE_NAME}:${IMAGE_TAG}"
 
-        APP_REPO_URL = "https://github.com/pavanjvm/applicationcode.git"
-        MANIFEST_REPO_URL = "https://github.com/pavanjvm/manifests.git"
+        APP_REPO_URL = "https://github.com/SUBASHREE-KB/applicationcode.git"
+        MANIFEST_REPO_URL = "https://github.com/SUBASHREE-KB/manifests.git"
         MANIFEST_REPO_BRANCH = "main"
     }
 
@@ -24,7 +24,7 @@ pipeline {
             }
             steps {
                 sh """
-                echo $DOCKER_CREDS_PSW | docker login 3.147.60.99:5000 -u $DOCKER_CREDS_USR --password-stdin
+                echo $DOCKER_CREDS_PSW | docker login 3.142.249.69:5000 -u $DOCKER_CREDS_USR --password-stdin
                 docker build -t $FULL_IMAGE .
                 docker push $FULL_IMAGE
                 """
@@ -48,7 +48,7 @@ pipeline {
 
                 git add deployment.yaml
                 git commit -m "Update image to ${FULL_IMAGE}"
-                git push https://$TOKEN@github.com/pavanjvm/manifests.git update-image-$BUILD_NUMBER
+                git push https://$TOKEN@github.com/SUBASHREE-KB/manifests.git update-image-$BUILD_NUMBER
                 """
             }
         }
