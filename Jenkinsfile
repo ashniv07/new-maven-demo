@@ -20,18 +20,13 @@ pipeline {
         }
 
         stage('Build and Push Docker Image') {
+            environment {
+                DOCKER_CREDS = credentials('nexus-docker-credentials')
+            }
             steps {
-                script {
-                    // Check if Dockerfile exists
-                    sh 'ls -al'
-
-                    // Docker login and push image
-                    sh """
-                    echo \$DOCKER_CREDS_PSW | docker login --insecure 3.142.249.69:5000 -u \$DOCKER_CREDS_USR --password-stdin
-                    docker build -t \$FULL_IMAGE .
-                    docker push \$FULL_IMAGE
-                    """
-                }
+                sh "echo $DOCKER_CREDS_PSW | docker login 3.142.249.69:5000 -u $DOCKER_CREDS_USR --password-stdin"
+                sh "docker build -t $FULL_IMAGE ."
+                sh "docker push $FULL_IMAGE"
             }
         }
 
