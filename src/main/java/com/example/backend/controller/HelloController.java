@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 
 @RestController
 public class HelloController {
-    @CrossOrigin(origins = "http://localhost:3001")
+    @CrossOrigin('*')
     @GetMapping("/hello")
     public String sayHello() {
         return "Hello from the Maven Backend!!!";
