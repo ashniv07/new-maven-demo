@@ -18,18 +18,16 @@ pipeline {
             }
         }
 
-        stage('Build and Push Docker Image') {
+      stage('Build and Push Docker Image') {
             environment {
-                DOCKER_CREDS = credentials('nexus-docker-credentials')  // Use Jenkins credentials to access Docker registry
+                DOCKER_CREDS = credentials('nexus-docker-credentials')
             }
             steps {
-                script {
-                    // Login to Nexus Docker registry and build & push image
-                    docker.withRegistry('http://3.142.249.69:5000', 'nexus-docker-credentials') {
-                        def customImage = docker.build(FULL_IMAGE)  // Build the Docker image
-                        customImage.push()  // Push the image to Nexus
-                    }
-                }
+                sh """
+                echo $DOCKER_CREDS_PSW | docker login 3.147.60.99:5000 -u $DOCKER_CREDS_USR --password-stdin
+                docker build -t $FULL_IMAGE .
+                docker push $FULL_IMAGE
+                """
             }
         }
 
