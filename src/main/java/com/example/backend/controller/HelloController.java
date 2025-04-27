@@ -7,6 +7,6 @@ import org.springframework.web.bind.annotation.RestController;
 public class HelloController {
     @GetMapping("/hello")
     public String sayHello() {
-        return "Hello from the Maven Backend!";
+        return "Hello from the Maven Backend!!!";
     }
 }
