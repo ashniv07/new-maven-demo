@@ -47,7 +47,7 @@ pipeline {
                 sh """
                 rm -rf manifests
                 git clone --branch $MANIFEST_REPO_BRANCH $MANIFEST_REPO_URL
-                cd manifests
+                cd kub-man
                 git config user.name "jenkins"
                 git config user.email "jenkins@ci.local"
 
