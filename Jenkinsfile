@@ -19,17 +19,21 @@ pipeline {
             }
         }
 
-        stage('Build and Push Docker Image') {
+       stage('Build and Push Docker Image') {
             environment {
                 DOCKER_CREDS = credentials('nexus-docker-credentials')
+                REGISTRY_URL = "http://3.142.249.69:5000"
             }
             steps {
-                sh "echo $DOCKER_CREDS_PSW | docker login 3.142.249.69:5000 -u $DOCKER_CREDS_USR --password-stdin"
-                sh "docker build -t $FULL_IMAGE ."
-                sh "docker push $FULL_IMAGE"
+                withCredentials([usernamePassword(credentialsId: 'nexus-docker-credentials', passwordVariable: 'DOCKER_PASSWORD', usernameVariable: 'DOCKER_USERNAME')]) {
+                    sh '''
+                        echo "${DOCKER_PASSWORD}" | docker login ${REGISTRY_URL} -u "${DOCKER_USERNAME}" --password-stdin
+                        docker build -t $FULL_IMAGE .
+                        docker push $FULL_IMAGE
+                    '''
+                }
             }
         }
-
         stage('Clone Manifest Repo and Update Image Tag') {
             steps {
                 sh """
