@@ -27,7 +27,7 @@ pipeline {
 
                     // Docker login and push image
                     sh """
-                    echo \$DOCKER_CREDS_PSW | docker login http://3.142.249.69:5000 -u \$DOCKER_CREDS_USR --password-stdin
+                    echo \$DOCKER_CREDS_PSW | docker login --insecure 3.142.249.69:5000 -u \$DOCKER_CREDS_USR --password-stdin
                     docker build -t \$FULL_IMAGE .
                     docker push \$FULL_IMAGE
                     """
