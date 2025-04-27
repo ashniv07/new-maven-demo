@@ -18,22 +18,23 @@ pipeline {
             }
         }
 
-       stage('Build and Push Docker Image') {
-            environment {
-                DOCKER_CREDS = credentials('nexus-docker-credentials')
-            }
-            steps {
-                script {
-                    // Explicitly use HTTP instead of HTTPS
-                    def registryUrl = 'http://3.142.249.69:5000'
-                    sh """
-                        echo $DOCKER_CREDS_PSW | docker login $registryUrl -u $DOCKER_CREDS_USR --password-stdin
-                        docker build -t $FULL_IMAGE .
-                        docker push $FULL_IMAGE
-                    """
-                }
+        stage('Build and Push Docker Image') {
+        environment {
+            DOCKER_CREDS = credentials('nexus-docker-credentials')
+        }
+        steps {
+            script {
+                // Explicitly use HTTP instead of HTTPS
+                def registryUrl = 'http://3.142.249.69:5000'
+                sh """
+                    echo $DOCKER_CREDS_PSW | docker login $registryUrl -u $DOCKER_CREDS_USR --password-stdin --disable-ssl
+                    docker build -t $FULL_IMAGE .
+                    docker push $FULL_IMAGE
+                """
             }
         }
+    }
+
 
 
 
