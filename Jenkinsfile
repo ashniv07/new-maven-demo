@@ -2,9 +2,9 @@ pipeline {
     agent any
 
     environment {
-        IMAGE_NAME = "3.142.249.69:5000/backend-app" // Nexus Private Registry
+        IMAGE_NAME = "backend-app" // Just image name, no URL here
         IMAGE_TAG = "v${BUILD_NUMBER}"
-        FULL_IMAGE = "${IMAGE_NAME}:${IMAGE_TAG}"
+        FULL_IMAGE = "3.142.249.69:5000/${IMAGE_NAME}:${IMAGE_TAG}"
 
         APP_REPO_URL = "https://github.com/SUBASHREE-KB/applicationcode.git"
         MANIFEST_REPO_URL = "https://github.com/SUBASHREE-KB/manifests.git"
@@ -18,16 +18,24 @@ pipeline {
             }
         }
 
-      stage('Build and Push Docker Image') {
+        stage('Build Docker Image') {
+            steps {
+                script {
+                    docker.build("${IMAGE_NAME}:${IMAGE_TAG}") // Build only, locally
+                }
+            }
+        }
+
+        stage('Push Docker Image to Nexus') {
             environment {
-                DOCKER_CREDS = credentials('nexus-docker-credentials')
+                DOCKER_CREDS = credentials('nexus-docker-credentials') // ID from Jenkins credentials
             }
             steps {
-                sh """
-                echo $DOCKER_CREDS_PSW | docker login 3.147.60.99:5000 -u $DOCKER_CREDS_USR --password-stdin
-                docker build -t $FULL_IMAGE .
-                docker push $FULL_IMAGE
-                """
+                script {
+                    docker.withRegistry('http://3.142.249.69:5000', 'nexus-docker-credentials') {
+                        docker.image("${IMAGE_NAME}:${IMAGE_TAG}").push()
+                    }
+                }
             }
         }
 
@@ -44,10 +52,10 @@ pipeline {
                 git config user.email "jenkins@ci.local"
 
                 git checkout -b update-image-$BUILD_NUMBER
-                sed -i "s|image: .*|image: ${FULL_IMAGE}|" deployment.yaml
+                sed -i "s|image: .*|image: 3.142.249.69:5000/${IMAGE_NAME}:${IMAGE_TAG}|" deployment.yaml
 
                 git add deployment.yaml
-                git commit -m "Update image to ${FULL_IMAGE}"
+                git commit -m "Update image to 3.142.249.69:5000/${IMAGE_NAME}:${IMAGE_TAG}"
                 git push https://$TOKEN@github.com/SUBASHREE-KB/manifests.git update-image-$BUILD_NUMBER
                 """
             }
