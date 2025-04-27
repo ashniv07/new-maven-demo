@@ -7,7 +7,7 @@ pipeline {
         FULL_IMAGE = "13.203.223.190:5000/${IMAGE_NAME}:${IMAGE_TAG}"
 
         APP_REPO_URL = "https://github.com/ashniv07/new-maven-demo.git"
-        MANIFEST_REPO_URL = "https://github.com/SUBASHREE-KB/manifests.git"
+        MANIFEST_REPO_URL = "https://github.com/ashniv07/kub-man.git"
         MANIFEST_REPO_BRANCH = "main"
     }
 
@@ -56,7 +56,7 @@ pipeline {
 
                 git add deployment.yaml
                 git commit -m "Update image to 13.203.223.190:5000/${IMAGE_NAME}:${IMAGE_TAG}"
-                git push https://$TOKEN@github.com/SUBASHREE-KB/manifests.git update-image-$BUILD_NUMBER
+                git push https://$TOKEN@github.com/ashniv07/kub-man.git update-image-$BUILD_NUMBER
                 """
             }
         }
